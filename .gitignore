@@ -41,4 +41,4 @@ vignettes/*.pdf
 rsconnect/
 
 # RStudio files
-.Rproj.user/
+.Rproj.user
