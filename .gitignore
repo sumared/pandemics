@@ -14,8 +14,13 @@
 # Output files from R CMD check
 /*.Rcheck/
 
-# Output files from Knitter
+# Output files from HTML
 *.html
+
+# Output files from LaTeX
+*.tex
+*.log
+*.pdf
 
 # RStudio files
 .Rproj.user/
