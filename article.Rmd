@@ -1,0 +1,20 @@
+---
+title: "Analysis of some aspects of gameplay of *Pandemics*"
+author: "Marcelo Ventura Freire"
+date: "`r format(Sys.time(), '%Y-%b-%d')`"
+output: 
+  html_document: 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Aspects to be analysed
+
+# Background Information about the Game *Pandemics*
+
+# Graph Aspects
+
+# Probability Aspects
+
