@@ -1,20 +1,67 @@
 ---
-title: "Analysis of some aspects of gameplay of *Pandemics*"
-author: "Marcelo Ventura Freire"
+title: "Analysis of Some Aspects of Gameplay of *Pandemics Survival*"
+author: |
+        | Marcelo Ventura Freire
+        | Thiago Tomazi
 date: "`r format(Sys.time(), '%Y-%b-%d')`"
 output: 
-  html_document: 
+ html_document:
+   toc: true
+   toc_depth: 2
+   number_sections: true
+   smart: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Aspects to be analysed
+# Introducion 
 
-# Background Information about the Game *Pandemics*
+## Aspects to be analysed
+
+## Background Information about the Game *Pandemics Survival*
+
+### *Pandemics Survival* versus *Pandemics*
+
+### Concepts
+
+#### Cooperative Game
+
+#### Cities and the Map
+
+#### Deseases and Cures
+
+#### Infections, Epidemies, and Outbreaks
+
+#### Movement Actions
+
+#### Special Actions
+
+#### Specialist Characters
+
+### Game Dynamics
+
+#### Desease Spread in the Map
+
+#### Infection Deck and Players' Deck
+
+#### Turn Structure
+
+#### Game Progress Indicators
 
 # Graph Aspects
 
+## Nodes and Edges
+
+## Adjacency Matrix to the cities mapped
+
+## Distance Matrix between the cities
+
 # Probability Aspects
+
+## The Infection Card Deck
+
+## The Players' Card Deck
+
 
