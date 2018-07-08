@@ -2,7 +2,7 @@
 title: "Analysis of Some Aspects of Gameplay of *Pandemic*"
 author: |
         | Marcelo Ventura Freire
-        | Thiago Tomazi
+        | Tiago Tomazi
 date: "`r format(Sys.time(), '%Y-%b-%d')`"
 output: 
   html_document:
