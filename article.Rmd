@@ -5,11 +5,11 @@ author: |
         | Thiago Tomazi
 date: "`r format(Sys.time(), '%Y-%b-%d')`"
 output: 
- html_document:
-   toc: true
-   toc_depth: 2
-   number_sections: true
-   smart: true
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    smart: true
 ---
 
 ```{r setup, include=FALSE}
@@ -37,9 +37,7 @@ library(magrittr)
 
 ### Infections, Epidemies, and Outbreaks
 
-### Movement Actions
-
-### Special Actions
+### Movement and Spacial Actions
 
 ### Specialist Characters
 
@@ -58,58 +56,15 @@ library(magrittr)
 ## Nodes and Edges
 
 ```{r}
-"
-city, color
-Atlanta, blue
-Chicago, blue
-Essen, blue
-London, blue
-Madrid, blue
-Milan, blue
-Montreal, blue
-NewYork, blue
-Paris, blue
-SanFrancisco, blue
-StPetersburg, blue
-Washington, blue
-Algiers, black
-Baghdad, black
-Cairo, black
-Chennai, black
-Delhi, black
-Istanbul, black
-Karachi, black
-Kolkata, black
-Moscow, black
-Mumbai, black
-Riyadh, black
-Tehran, black
-Bogota, yellow
-BuenosAires, yellow
-Johannesburg, yellow
-Khartoum, yellow
-Kinshasa, yellow
-Lagos, yellow
-Lima, yellow
-LosAngeles, yellow
-MexicoCity, yellow
-Miami, yellow
-Santiago, yellow
-SaoPaulo, yellow
-Bangkok, red
-Beijing, red
-HoChiMinh, red
-HongKong, red
-Jakarta, red
-Manila, red
-Osaka, red
-Seoul, red
-Shanghai, red
-Sydney, red
-Taipei, red
-Tokyo, red
-" %>%
-  read.csv(text = .) -> nodes
+nodes <- read.csv("nodes.csv", strip.white = T)
+centers <- nodes$name[c(1)]
+adjacency <- 
+  read.csv("adjacency.csv", header = F) %>% 
+  as.matrix() %>%
+  `dimnames<-`(list(nodes$name, nodes$name))
+
+# edges <- ???
+
 ```
 
 
