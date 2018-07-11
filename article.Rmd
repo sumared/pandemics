@@ -14,9 +14,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(magrittr)
 library(tidyverse)
 library(tidygraph)
-library(magrittr)
 library(ggrepel)
 library(ggraph)
 ```
@@ -60,59 +60,41 @@ library(ggraph)
 ## Nodes and Edges
 
 ```{r read.graph}
-nodes <- read.csv("nodes.csv", strip.white = T)
-print(nodes)
-centers <- nodes$name[c(1)]
+nodes <- 
+  read.csv("nodes.csv", strip.white = T, stringsAsFactors = F) %>%
+  mutate(
+    id = 1:n(), 
+    contagion = 0
+  )
 adjacency <- 
   read.csv("adjacency.csv", header = F) %>% 
   as.matrix() %>%
   set_colnames(nodes$name) %>%
   set_rownames(nodes$name)
-world <- as_tbl_graph(adjacency, nodes, directed = F)
+world <- 
+  as_tbl_graph(adjacency, directed = F) %>%
+  activate(nodes) %>%
+  left_join(nodes, by = "name") 
+world
 ```
 
 ```{r plot.graph}
-# ggraph(world, layout = "nicely") +
-#   # geom_node_label(aes(label = name, color = color)) +
-#   geom_node_label(aes(label = name)) + 
-#   # geom_text_repel() +
-#   geom_edge_link() +
-#   theme_void()
-ggraph(world, layout = "nicely") +
-  geom_node_label(aes(label = name)) + 
-  geom_edge_link() +
-  ggtitle("nicely") +
-  theme_void()
-ggraph(world, layout = "mds") +
-  geom_node_label(aes(label = name)) + 
-  geom_edge_link() +
-  ggtitle("mds") +
-  theme_void()
-ggraph(world, layout = "sphere") +
-  geom_node_label(aes(label = name)) + 
-  geom_edge_link() +
-  ggtitle("sphere") +
-  theme_void()
-ggraph(world, layout = "kk") +
-  geom_node_label(aes(label = name)) + 
-  geom_edge_link() +
-  ggtitle("kk") +
-  theme_void()
-ggraph(world, layout = "drl") +
-  geom_node_label(aes(label = name)) +
-  geom_edge_link() +
-  ggtitle("drl") +
-  theme_void()
-ggraph(world, layout = "lgl") +
-  geom_node_label(aes(label = name)) +
-  geom_edge_link() +
-  ggtitle("lgl") +
-  theme_void()
-ggraph(world, layout = "linear", circular = T) +
-  geom_node_label(aes(label = name)) + 
-  geom_edge_link() +
-  ggtitle("linear") +
-  theme_void()
+plot.graph <- 
+  function(layout, ...) {
+    ggraph(world, layout = layout, ...) +
+      geom_node_label(aes(label = name)) + 
+      geom_edge_link() +
+      ggtitle(layout) +
+      theme_void()
+  }
+plot.graph("nicely")
+plot.graph("mds")
+plot.graph("sphere")
+plot.graph("kk")
+plot.graph("drl")
+plot.graph("lgl")
+plot.graph("circle")
+plot.graph("linear", circular = T)
 ```
 
 ## Adjacency Matrix to the cities
@@ -125,20 +107,30 @@ print(adjacency)
 
 ```{r distance}
 A <- diag(diag(adjacency)^0)
+B <- `dimnames<-`(adjacency, NULL)
 distances <- adjacencies <- list()
 k <- 0
 while (any(A==0)) {
   k <- k + 1
-  A <- A %*% adjacency 
+  A <- A %*% B 
   adjacencies[[k]] <- A
   distances[[k]] <- k / (A > 0)
 }
 distance <- 
   do.call(pmin, distances) %>%
+  `diag<-`(0) %>%
   set_colnames(nodes$name) %>%
   set_rownames(nodes$name)
 print(distance)
 ```
+
+## Where to build centers
+
+```{r build.centers}
+centers <- c("Atlanta")
+
+```
+
 
 # Probability and Decision Theories' Aspects
 
