@@ -15,6 +15,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(magrittr)
+library(igraph)
 library(tidyverse)
 library(tidygraph)
 library(ggrepel)
@@ -79,10 +80,11 @@ world
 ```
 
 ```{r plot.graph}
+rglplot(world, dim = 3)
 plot.graph <- 
   function(layout, ...) {
     ggraph(world, layout = layout, ...) +
-      geom_node_label(aes(label = name)) + 
+      geom_node_label(aes(label = name, colour = color)) + 
       geom_edge_link() +
       ggtitle(layout) +
       theme_void()
@@ -105,24 +107,48 @@ print(adjacency)
 
 ## Distance Matrix between the cities
 
+Calculating the matrix
+
 ```{r distance}
-A <- diag(diag(adjacency)^0)
-B <- `dimnames<-`(adjacency, NULL)
+A <- adjacency
+dimnames(A) <-NULL
+B <- diag(1, nrow(adjacency))
 distances <- adjacencies <- list()
 k <- 0
-while (any(A==0)) {
+repeat {
+  distances[[k+1]] <- ifelse(B > 0, k, Inf)
+  adjacencies[[k+1]] <- B
+  if (all(B > 0))
+    break
   k <- k + 1
-  A <- A %*% B 
-  adjacencies[[k]] <- A
-  distances[[k]] <- k / (A > 0)
+  B <- B %*% A
 }
 distance <- 
   do.call(pmin, distances) %>%
-  `diag<-`(0) %>%
   set_colnames(nodes$name) %>%
   set_rownames(nodes$name)
 print(distance)
 ```
+
+Incorporating a 3D Multidimensional Scaling of the distance matrix in the network
+
+```{r mds.distance}
+world %<>%
+  activate(nodes) %>%
+  left_join(
+    cmdscale(distance, k = 3) %>% 
+      as.data.frame() %>%
+      rownames_to_column() %>%
+      set_colnames(c("name", "x", "y", "z")),
+    by = "name"
+  ) 
+```
+
+
+```{r plot.mds}
+```
+
+
 
 ## Where to build centers
 
