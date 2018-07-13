@@ -1,15 +1,20 @@
 ---
 title: "Analysis of Some Aspects of Gameplay of *Pandemic*"
 author: |
-        | Marcelo Ventura Freire
-        | Tiago Tomazi
+  | Marcelo Ventura Freire
+  | Rafael Ozzetti
+  | Tiago Tomazi
 date: "`r format(Sys.time(), '%Y-%b-%d')`"
-output: 
-  html_document:
-    toc: true
+output:
+  pdf_document:
+    toc: yes
     toc_depth: 2
-    number_sections: true
-    smart: true
+    number_sections: yes
+  html_document:
+    number_sections: yes
+    smart: yes
+    toc: yes
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -72,15 +77,22 @@ adjacency <-
   as.matrix() %>%
   set_colnames(nodes$name) %>%
   set_rownames(nodes$name)
+print(adjacency)
 world <- 
-  as_tbl_graph(adjacency, directed = F) %>%
+  adjacency %>%
+  as_tbl_graph(directed = F) %>%
   activate(nodes) %>%
   left_join(nodes, by = "name") 
-world
+print(world)
+world %>% 
+  as_edgelist() %>% 
+  as.tibble() %>% 
+  set_colnames(c("from", "to")) %>%
+  # write_csv("edgelist.csv")
+  print()
 ```
 
 ```{r plot.graph}
-rglplot(world, dim = 3)
 plot.graph <- 
   function(layout, ...) {
     ggraph(world, layout = layout, ...) +
@@ -97,6 +109,10 @@ plot.graph("drl")
 plot.graph("lgl")
 plot.graph("circle")
 plot.graph("linear", circular = T)
+```
+
+```{r plot.graph.3d}
+# rglplot(world, dim = 3)
 ```
 
 ## Adjacency Matrix to the cities
@@ -128,6 +144,7 @@ distance <-
   set_colnames(nodes$name) %>%
   set_rownames(nodes$name)
 print(distance)
+# write.csv(distance, "distance.csv")
 ```
 
 Incorporating a 3D Multidimensional Scaling of the distance matrix in the network
@@ -142,10 +159,7 @@ world %<>%
       set_colnames(c("name", "x", "y", "z")),
     by = "name"
   ) 
-```
-
-
-```{r plot.mds}
+print(world)
 ```
 
 
