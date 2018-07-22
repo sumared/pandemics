@@ -110,11 +110,6 @@ plot.graph("lgl")
 plot.graph("circle")
 plot.graph("linear", circular = T)
 ```
-
-```{r plot.graph.3d}
-# rglplot(world, dim = 3)
-```
-
 ## Adjacency Matrix to the cities
 
 ```{r adjacency}
@@ -143,7 +138,7 @@ distance <-
   do.call(pmin, distances) %>%
   set_colnames(nodes$name) %>%
   set_rownames(nodes$name)
-print(distance)
+# print(distance)
 # write.csv(distance, "distance.csv")
 ```
 
@@ -163,13 +158,19 @@ print(world)
 ```
 
 
+```{r plot.graph.3d}
+# rglplot(world, dim = 3)
+```
+
+
 
 ## Where to build centers
 
 ```{r build.centers}
-centers <- c("Atlanta")
-
+centers <- c("Atlanta") # initial center
 ```
+
+### Where to build centers given the most probable cities with initial infection
 
 
 # Probability and Decision Theories' Aspects
@@ -179,6 +180,21 @@ centers <- c("Atlanta")
 ## Basic Gameplay: Restricted Shuffling 
 
 ## Championship: Partial Deck Building and Restricted Shuffling 
+
+# All together now: Graph, Probability and Decision Theories 
+
+## The cities that will have infection
+
+## The maximum number of cities that will be infected
+
+## Maximum distance among infected cities
+
+## When it is worth to build center
+
+## How many centers to build
+
+## Where to build centers
+
 
 
 
