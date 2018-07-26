@@ -20,7 +20,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(magrittr)
-library(igraph)
 library(tidyverse)
 library(tidygraph)
 library(ggrepel)
@@ -145,7 +144,8 @@ distance <-
 Incorporating a 3D Multidimensional Scaling of the distance matrix in the network
 
 ```{r mds.distance}
-world %<>%
+mdsworld <- 
+  world %>%
   activate(nodes) %>%
   left_join(
     cmdscale(distance, k = 3) %>% 
@@ -154,12 +154,25 @@ world %<>%
       set_colnames(c("name", "x", "y", "z")),
     by = "name"
   ) 
-print(world)
+nmmdsworld <- 
+  world %>%
+  activate(nodes) %>%
+  left_join(
+    MASS::isoMDS(distance, k = 3) %>% 
+      as.data.frame() %>%
+      select(-stress) %>%
+      rownames_to_column() %>%
+      set_colnames(c("name", "x", "y", "z")),
+    by = "name"
+  ) 
+print(mdsworld)
+print(nmmdsworld)
 ```
 
 
 ```{r plot.graph.3d}
-# rglplot(world, dim = 3)
+igraph::rglplot(mdsworld, dim = 3)
+igraph::rglplot(nmmdsworld, dim = 3)
 ```
 
 
