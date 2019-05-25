@@ -1,20 +1,29 @@
 ---
 title: "Analysis of Some Aspects of Gameplay of *Pandemic*"
 author: |
-        | Marcelo Ventura Freire
-        | Tiago Tomazi
+  | Marcelo Ventura Freire
+  | Rafael Ozzetti
+  | Tiago Tomazi
 date: "`r format(Sys.time(), '%Y-%b-%d')`"
-output: 
-  html_document:
-    toc: true
+output:
+  pdf_document:
+    toc: yes
     toc_depth: 2
-    number_sections: true
-    smart: true
+    number_sections: yes
+  html_document:
+    number_sections: yes
+    smart: yes
+    toc: yes
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(magrittr)
+library(tidyverse)
+library(tidygraph)
+library(ggrepel)
+library(ggraph)
 ```
 
 # Introducion 
@@ -55,23 +64,127 @@ library(magrittr)
 
 ## Nodes and Edges
 
-```{r}
-nodes <- read.csv("nodes.csv", strip.white = T)
-centers <- nodes$name[c(1)]
+```{r read.graph}
+nodes <- 
+  read.csv("nodes.csv", strip.white = T, stringsAsFactors = F) %>%
+  mutate(
+    id = 1:n(), 
+    contagion = 0
+  )
 adjacency <- 
   read.csv("adjacency.csv", header = F) %>% 
   as.matrix() %>%
-  `dimnames<-`(list(nodes$name, nodes$name))
+  set_colnames(nodes$name) %>%
+  set_rownames(nodes$name)
+print(adjacency)
+world <- 
+  adjacency %>%
+  as_tbl_graph(directed = F) %>%
+  activate(nodes) %>%
+  left_join(nodes, by = "name") 
+print(world)
+world %>% 
+  as_edgelist() %>% 
+  as.tibble() %>% 
+  set_colnames(c("from", "to")) %>%
+  # write_csv("edgelist.csv")
+  print()
+```
 
-# edges <- ???
+```{r plot.graph}
+plot.graph <- 
+  function(layout, ...) {
+    ggraph(world, layout = layout, ...) +
+      geom_node_label(aes(label = name, colour = color)) + 
+      geom_edge_link() +
+      ggtitle(layout) +
+      theme_void()
+  }
+plot.graph("nicely")
+plot.graph("mds")
+plot.graph("sphere")
+plot.graph("kk")
+plot.graph("drl")
+plot.graph("lgl")
+plot.graph("circle")
+plot.graph("linear", circular = T)
+```
+## Adjacency Matrix to the cities
 
+```{r adjacency}
+print(adjacency)
+```
+
+## Distance Matrix between the cities
+
+Calculating the matrix
+
+```{r distance}
+A <- adjacency
+dimnames(A) <-NULL
+B <- diag(1, nrow(adjacency))
+distances <- adjacencies <- list()
+k <- 0
+repeat {
+  distances[[k+1]] <- ifelse(B > 0, k, Inf)
+  adjacencies[[k+1]] <- B
+  if (all(B > 0))
+    break
+  k <- k + 1
+  B <- B %*% A
+}
+distance <- 
+  do.call(pmin, distances) %>%
+  set_colnames(nodes$name) %>%
+  set_rownames(nodes$name)
+# print(distance)
+# write.csv(distance, "distance.csv")
+```
+
+Incorporating a 3D Multidimensional Scaling of the distance matrix in the network
+
+```{r mds.distance}
+mdsworld <- 
+  world %>%
+  activate(nodes) %>%
+  left_join(
+    cmdscale(distance, k = 3) %>% 
+      as.data.frame() %>%
+      rownames_to_column() %>%
+      set_colnames(c("name", "x", "y", "z")),
+    by = "name"
+  ) 
+nmmdsworld <- 
+  world %>%
+  activate(nodes) %>%
+  left_join(
+    MASS::isoMDS(distance, k = 3) %>% 
+      as.data.frame() %>%
+      select(-stress) %>%
+      rownames_to_column() %>%
+      set_colnames(c("name", "x", "y", "z")),
+    by = "name"
+  ) 
+print(mdsworld)
+print(nmmdsworld)
+```
+
+
+```{r plot.graph.3d}
+igraph::rglplot(mdsworld, dim = 3)
+igraph::rglplot(nmmdsworld, dim = 3)
 ```
 
 
 
-## Adjacency Matrix to the cities
+## Where to build centers
 
-## Distance Matrix between the cities
+```{r build.centers}
+centers <- c("Atlanta") # initial center
+```
+
+### Where to build centers given the most probable cities with initial infection
+
 
 # Probability and Decision Theories' Aspects
 
@@ -80,6 +193,21 @@ adjacency <-
 ## Basic Gameplay: Restricted Shuffling 
 
 ## Championship: Partial Deck Building and Restricted Shuffling 
+
+# All together now: Graph, Probability and Decision Theories 
+
+## The cities that will have infection
+
+## The maximum number of cities that will be infected
+
+## Maximum distance among infected cities
+
+## When it is worth to build center
+
+## How many centers to build
+
+## Where to build centers
+
 
 
 
